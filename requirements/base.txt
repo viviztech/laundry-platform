@@ -1,0 +1,30 @@
+# Core Django packages
+Django==5.0
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+
+# Database
+psycopg2-binary>=2.9.9
+dj-database-url==2.1.0
+
+# Authentication
+djangorestframework-simplejwt==5.3.1
+django-allauth==0.57.0
+
+# Environment variables
+python-decouple==3.8
+
+# Redis and Celery
+redis==5.0.1
+celery==5.3.4
+django-redis==5.4.0
+
+# Image processing
+Pillow>=10.3.0
+
+# API documentation
+drf-spectacular==0.27.0
+
+# Utilities
+python-dateutil==2.8.2
+pytz==2023.3

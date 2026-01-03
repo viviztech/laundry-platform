@@ -1,0 +1,48 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Order Ready for Delivery - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>Your Laundry is Ready!</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>Excellent news! Your laundry has been cleaned and is ready for delivery.</p>
+
+<div class="info-box success-box">
+    <strong>Order Number:</strong> {{ order.order_number }}
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Order Status:</td>
+            <td><strong>{{ order.get_status_display }}</strong></td>
+        </tr>
+        <tr>
+            <td>Ready Since:</td>
+            <td>{{ order.updated_at|date:"F d, Y H:i" }}</td>
+        </tr>
+        <tr>
+            <td>Scheduled Delivery:</td>
+            <td>{{ order.delivery_date|date:"F d, Y" }} at {{ order.delivery_time_slot }}</td>
+        </tr>
+        <tr>
+            <td>Total Amount:</td>
+            <td><strong>₹{{ order.total_amount }}</strong></td>
+        </tr>
+    </table>
+</div>
+
+<p>Your freshly cleaned laundry will be delivered to your address during the scheduled delivery slot.</p>
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">Track Delivery</a>
+</center>
+{% endif %}
+
+<p>Please ensure someone is available to receive the delivery.</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

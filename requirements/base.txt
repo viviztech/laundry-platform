@@ -1,6 +1,6 @@
-# Core Django packages
-Django==5.0
-djangorestframework==3.14.0
+# Core Django packages (Python 3.14 compatible)
+Django>=6.0
+djangorestframework>=3.16.0
 django-cors-headers==4.3.1
 
 # Database
@@ -18,6 +18,15 @@ python-decouple==3.8
 redis==5.0.1
 celery==5.3.4
 django-redis==5.4.0
+
+# WebSocket support
+channels[daphne]==4.0.0
+channels-redis==4.1.0
+
+# SMS & Push Notifications
+twilio==8.10.0
+pywebpush==1.14.0
+py-vapid==1.9.0
 
 # Image processing
 Pillow>=10.3.0

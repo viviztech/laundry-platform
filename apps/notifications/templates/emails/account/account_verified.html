@@ -1,0 +1,62 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Account Verified - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>Account Successfully Verified</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>Great news! Your LaundryConnect account has been successfully verified.</p>
+
+<div class="info-box success-box">
+    <strong>✓ Your account is now fully activated!</strong>
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Account Email:</td>
+            <td><strong>{{ user.email }}</strong></td>
+        </tr>
+        <tr>
+            <td>Verification Date:</td>
+            <td>{{ user.profile.verified_at|default:user.last_login|date:"F d, Y H:i" }}</td>
+        </tr>
+        <tr>
+            <td>Account Status:</td>
+            <td><strong style="color: #28a745;">Verified & Active</strong></td>
+        </tr>
+    </table>
+</div>
+
+<p>You can now enjoy all the benefits of your verified account:</p>
+
+<ul>
+    <li><strong>Place Orders:</strong> Schedule laundry pickups and deliveries</li>
+    <li><strong>Secure Payments:</strong> Pay securely using multiple payment methods</li>
+    <li><strong>Order History:</strong> Access your complete order history</li>
+    <li><strong>Special Offers:</strong> Receive exclusive deals and promotions</li>
+    <li><strong>Priority Support:</strong> Get faster support response times</li>
+</ul>
+
+<div class="info-box">
+    <strong>Welcome Bonus!</strong><br>
+    As a verified user, you've earned <strong>₹100 LaundryConnect Credits</strong><br>
+    Use them on your next order!
+</div>
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">Start Using Your Account</a>
+</center>
+{% endif %}
+
+<p><strong>Security Tip:</strong> Keep your account secure by using a strong password and enabling two-factor authentication.</p>
+
+<p>If you didn't request this verification, please contact our security team immediately at <a href="mailto:security@laundryconnect.com">security@laundryconnect.com</a></p>
+
+<p>Happy laundering!</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

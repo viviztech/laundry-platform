@@ -102,11 +102,11 @@ class WalletSerializer(serializers.ModelSerializer):
         model = Wallet
         fields = (
             'id', 'user', 'user_email', 'balance', 'is_active',
-            'total_credited', 'total_debited', 'recent_transactions',
+            'is_locked', 'recent_transactions',
             'created_at', 'updated_at'
         )
         read_only_fields = (
-            'id', 'user', 'balance', 'total_credited', 'total_debited',
+            'id', 'user', 'balance', 'is_locked',
             'created_at', 'updated_at'
         )
 
@@ -134,23 +134,24 @@ class PaymentSerializer(serializers.ModelSerializer):
 
     user_email = serializers.EmailField(source='user.email', read_only=True)
     order_id_display = serializers.CharField(source='order.order_id', read_only=True)
-    payment_method_display = serializers.CharField(source='saved_payment_method.display_name', read_only=True)
+    method_display = serializers.CharField(source='get_method_display', read_only=True)
 
     class Meta:
         model = Payment
         fields = (
             'id', 'payment_id', 'order', 'order_id_display',
             'user', 'user_email', 'amount', 'transaction_fee',
-            'net_amount', 'currency', 'payment_method',
-            'saved_payment_method', 'payment_method_display',
-            'gateway', 'gateway_payment_id', 'gateway_transaction_id',
-            'gateway_order_id', 'status', 'paid_at',
-            'failure_reason', 'notes', 'created_at', 'updated_at'
+            'net_amount', 'currency', 'method', 'method_display',
+            'gateway', 'gateway_payment_id', 'gateway_order_id',
+            'gateway_signature', 'status', 'failure_reason',
+            'error_message', 'metadata', 'completed_at',
+            'created_at', 'updated_at'
         )
         read_only_fields = (
             'id', 'payment_id', 'user', 'net_amount',
-            'gateway_payment_id', 'gateway_transaction_id',
-            'paid_at', 'created_at', 'updated_at'
+            'gateway_payment_id', 'gateway_order_id',
+            'gateway_signature', 'completed_at',
+            'created_at', 'updated_at'
         )
 
 
@@ -158,14 +159,14 @@ class PaymentListSerializer(serializers.ModelSerializer):
     """Lightweight serializer for listing payments."""
 
     order_id_display = serializers.CharField(source='order.order_id', read_only=True)
-    payment_method_display = serializers.CharField(source='get_payment_method_display', read_only=True)
+    method_display = serializers.CharField(source='get_method_display', read_only=True)
 
     class Meta:
         model = Payment
         fields = (
             'id', 'payment_id', 'order_id_display', 'amount',
-            'payment_method', 'payment_method_display', 'gateway',
-            'status', 'created_at', 'paid_at'
+            'method', 'method_display', 'gateway',
+            'status', 'created_at', 'completed_at'
         )
 
 
@@ -173,11 +174,11 @@ class CreatePaymentSerializer(serializers.Serializer):
     """Serializer for creating a payment."""
 
     order_id = serializers.UUIDField()
-    payment_method = serializers.ChoiceField(choices=Payment.METHOD_CHOICES)
-    saved_payment_method_id = serializers.UUIDField(required=False, allow_null=True)
+    method = serializers.ChoiceField(choices=Payment.METHOD_CHOICES)
+    payment_method_id = serializers.UUIDField(required=False, allow_null=True)
     gateway = serializers.ChoiceField(choices=Payment.GATEWAY_CHOICES, default='razorpay')
 
-    def validate_saved_payment_method_id(self, value):
+    def validate_payment_method_id(self, value):
         """Validate saved payment method belongs to user."""
         if value:
             user = self.context.get('request').user

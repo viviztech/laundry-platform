@@ -1,0 +1,46 @@
+{% extends "emails/base.html" %}
+
+{% block title %}{{ notification.title }} - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>{{ notification.title|default:"Notification from LaundryConnect" }}</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<div class="info-box">
+    {{ notification.message|safe }}
+</div>
+
+{% if notification.metadata.details %}
+<div class="order-details">
+    <table>
+        {% for key, value in notification.metadata.details.items %}
+        <tr>
+            <td>{{ key }}:</td>
+            <td><strong>{{ value }}</strong></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+
+{% if notification.metadata.action_text and action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">{{ notification.metadata.action_text }}</a>
+</center>
+{% elif action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">View Details</a>
+</center>
+{% endif %}
+
+{% if notification.metadata.additional_info %}
+<div class="info-box">
+    {{ notification.metadata.additional_info|safe }}
+</div>
+{% endif %}
+
+<p>If you have any questions, please don't hesitate to contact our support team.</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

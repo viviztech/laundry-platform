@@ -1,0 +1,74 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Welcome to LaundryConnect!{% endblock %}
+
+{% block content %}
+<h2>Welcome to LaundryConnect!</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>Thank you for joining LaundryConnect - your trusted laundry service partner!</p>
+
+<div class="info-box success-box">
+    <strong>Your account has been successfully created!</strong>
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Account Email:</td>
+            <td><strong>{{ user.email }}</strong></td>
+        </tr>
+        <tr>
+            <td>Phone Number:</td>
+            <td>{{ user.phone|default:"Not provided" }}</td>
+        </tr>
+        <tr>
+            <td>Registered On:</td>
+            <td>{{ user.date_joined|date:"F d, Y" }}</td>
+        </tr>
+    </table>
+</div>
+
+<p><strong>What's Next?</strong></p>
+
+<ul>
+    <li><strong>Complete Your Profile:</strong> Add your delivery addresses and contact information</li>
+    <li><strong>Explore Services:</strong> Browse our wide range of laundry and dry cleaning services</li>
+    <li><strong>Place Your First Order:</strong> Schedule a pickup and experience our quality service</li>
+    <li><strong>Track Everything:</strong> Monitor your orders in real-time through our app</li>
+</ul>
+
+<div class="info-box">
+    <strong>First Order Special!</strong><br>
+    Use code <strong>WELCOME20</strong> to get 20% off on your first order<br>
+    <small>(Valid for 30 days)</small>
+</div>
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">Place Your First Order</a>
+</center>
+{% endif %}
+
+<p><strong>Why Choose LaundryConnect?</strong></p>
+<ul>
+    <li>✓ Professional cleaning services</li>
+    <li>✓ Convenient pickup and delivery</li>
+    <li>✓ Affordable pricing</li>
+    <li>✓ Quality guarantee</li>
+    <li>✓ Track orders in real-time</li>
+</ul>
+
+<p>If you have any questions or need assistance, our support team is here to help!</p>
+
+<center>
+    <a href="mailto:support@laundryconnect.com">Contact Support</a> |
+    <a href="#">Download Mobile App</a> |
+    <a href="#">View Services</a>
+</center>
+
+<p>We're excited to serve you!</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

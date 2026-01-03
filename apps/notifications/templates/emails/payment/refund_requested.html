@@ -1,0 +1,52 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Refund Request Received - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>Refund Request Received</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>We've received your refund request and are processing it.</p>
+
+<div class="info-box">
+    <strong>Order Number:</strong> {{ order.order_number }}
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Refund Amount:</td>
+            <td><strong>₹{{ refund.amount|default:order.total_amount }}</strong></td>
+        </tr>
+        <tr>
+            <td>Request Date:</td>
+            <td>{{ refund.created_at|default:order.updated_at|date:"F d, Y H:i" }}</td>
+        </tr>
+        <tr>
+            <td>Refund Status:</td>
+            <td><strong>Processing</strong></td>
+        </tr>
+        {% if refund.reason %}
+        <tr>
+            <td>Reason:</td>
+            <td>{{ refund.reason }}</td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+<p>Our team is reviewing your refund request. This typically takes 1-2 business days.</p>
+
+<p>Once approved, the refund will be processed to your original payment method within 5-7 business days.</p>
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">View Refund Status</a>
+</center>
+{% endif %}
+
+<p>If you have any questions, please don't hesitate to contact our support team.</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

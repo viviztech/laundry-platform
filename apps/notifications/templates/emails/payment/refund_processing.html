@@ -1,0 +1,50 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Refund Being Processed - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>Refund Approved - Processing</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>Good news! Your refund has been approved and is now being processed.</p>
+
+<div class="info-box success-box">
+    <strong>Order Number:</strong> {{ order.order_number }}
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Refund Amount:</td>
+            <td><strong>₹{{ refund.amount|default:order.total_amount }}</strong></td>
+        </tr>
+        <tr>
+            <td>Approved On:</td>
+            <td>{{ refund.updated_at|default:order.updated_at|date:"F d, Y H:i" }}</td>
+        </tr>
+        <tr>
+            <td>Refund Method:</td>
+            <td>{{ payment.payment_method|default:"Original Payment Method" }}</td>
+        </tr>
+        <tr>
+            <td>Expected Credit:</td>
+            <td>5-7 business days</td>
+        </tr>
+    </table>
+</div>
+
+<p>The refund is currently being processed by our payment partner. You should see the amount credited to your account within 5-7 business days.</p>
+
+<p>We'll send you a confirmation email once the refund has been successfully completed.</p>
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">View Details</a>
+</center>
+{% endif %}
+
+<p>Thank you for your patience.</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

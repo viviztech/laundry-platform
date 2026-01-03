@@ -1,0 +1,53 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Refund Failed - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>Refund Processing Failed</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>We encountered an issue while processing your refund.</p>
+
+<div class="info-box danger-box">
+    <strong>Order Number:</strong> {{ order.order_number }}
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Refund Amount:</td>
+            <td><strong>₹{{ refund.amount|default:order.total_amount }}</strong></td>
+        </tr>
+        <tr>
+            <td>Attempted On:</td>
+            <td>{{ refund.updated_at|date:"F d, Y H:i" }}</td>
+        </tr>
+        {% if refund.failure_reason %}
+        <tr>
+            <td>Issue:</td>
+            <td>{{ refund.failure_reason }}</td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+<p>Unfortunately, we couldn't complete the refund due to a technical issue. This could be because:</p>
+
+<ul>
+    <li>The original payment method is no longer valid</li>
+    <li>Account details have changed</li>
+    <li>Technical issues with the payment gateway</li>
+</ul>
+
+<p><strong>What happens next?</strong></p>
+<p>Our support team has been notified and will contact you within 24 hours to resolve this issue and complete your refund manually.</p>
+
+<center>
+    <a href="mailto:support@laundryconnect.com" class="button">Contact Support</a>
+</center>
+
+<p>We apologize for the inconvenience and appreciate your patience.</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

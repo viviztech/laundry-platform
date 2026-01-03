@@ -1,0 +1,50 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Order In Progress - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>Your Laundry is Being Processed</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>Good news! Our team has started processing your laundry order.</p>
+
+<div class="info-box">
+    <strong>Order Number:</strong> {{ order.order_number }}
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Order Status:</td>
+            <td><strong>{{ order.get_status_display }}</strong></td>
+        </tr>
+        <tr>
+            <td>Processing Started:</td>
+            <td>{{ order.updated_at|date:"F d, Y H:i" }}</td>
+        </tr>
+        {% if order.partner %}
+        <tr>
+            <td>Processing Partner:</td>
+            <td>{{ order.partner.business_name }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Estimated Completion:</td>
+            <td>{{ order.delivery_date|date:"F d, Y" }}</td>
+        </tr>
+    </table>
+</div>
+
+<p>Your clothes are in expert hands! We're giving them the care and attention they deserve.</p>
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">Track Order</a>
+</center>
+{% endif %}
+
+<p>We'll notify you as soon as your laundry is ready for delivery.</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

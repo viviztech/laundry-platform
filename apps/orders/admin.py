@@ -146,3 +146,12 @@ class OrderRatingAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     readonly_fields = ('created_at', 'updated_at')
     list_select_related = ('order', 'user')
+
+
+# Import partner admin classes
+from .partner_admin import (
+    OrderProcessingStageAdmin,
+    OrderItemProcessingAdmin,
+    PartnerOrderNoteAdmin,
+    DeliveryProofAdmin
+)

@@ -13,6 +13,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-temp-key-change-in-pr
 
 # Application definition
 DJANGO_APPS = [
+    "daphne",  # Must be first for Channels support
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -27,6 +28,7 @@ THIRD_PARTY_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "drf_spectacular",
+    "channels",
 ]
 
 LOCAL_APPS = [
@@ -35,6 +37,12 @@ LOCAL_APPS = [
     "apps.orders",
     "apps.partners",
     "apps.payments",
+    "apps.notifications",
+    "apps.realtime",
+    "apps.chat",
+    "apps.tracking",
+    "apps.analytics",
+    "apps.ai",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -69,6 +77,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
+
+# ASGI Application for Channels
+ASGI_APPLICATION = "config.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -189,6 +200,18 @@ CACHES = {
 # Session Configuration
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
+
+# Django Channels Configuration
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(REDIS_HOST, int(REDIS_PORT))],
+            "capacity": 1500,  # Maximum messages to store
+            "expiry": 10,  # Message expiry in seconds
+        },
+    },
+}
 
 # Celery Configuration
 CELERY_BROKER_URL = REDIS_URL

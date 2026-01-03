@@ -1,0 +1,52 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Refund Completed - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>Refund Completed Successfully</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>Your refund has been successfully processed!</p>
+
+<div class="info-box success-box">
+    <strong>Order Number:</strong> {{ order.order_number }}
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Refund Amount:</td>
+            <td><strong>₹{{ refund.amount|default:order.total_amount }}</strong></td>
+        </tr>
+        <tr>
+            <td>Refund Completed:</td>
+            <td>{{ refund.completed_at|default:refund.updated_at|date:"F d, Y H:i" }}</td>
+        </tr>
+        <tr>
+            <td>Refund Method:</td>
+            <td>{{ payment.payment_method|default:"Original Payment Method" }}</td>
+        </tr>
+        {% if refund.transaction_id %}
+        <tr>
+            <td>Transaction ID:</td>
+            <td>{{ refund.transaction_id }}</td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+<p>The refund amount has been credited to your original payment method. Depending on your bank, it may take 2-3 business days to reflect in your account.</p>
+
+<p>If you don't see the refund after 3 business days, please check with your bank or contact our support team.</p>
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">View Receipt</a>
+</center>
+{% endif %}
+
+<p>We're sorry we couldn't meet your expectations this time. We'd love another chance to serve you better.</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

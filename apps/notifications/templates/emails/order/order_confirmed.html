@@ -1,0 +1,50 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Order Confirmed - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>Order Confirmed</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>Great news! Your order has been confirmed and is being prepared for pickup.</p>
+
+<div class="info-box success-box">
+    <strong>Order Number:</strong> {{ order.order_number }}
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Order Status:</td>
+            <td><strong>{{ order.get_status_display }}</strong></td>
+        </tr>
+        <tr>
+            <td>Total Amount:</td>
+            <td><strong>₹{{ order.total_amount }}</strong></td>
+        </tr>
+        <tr>
+            <td>Scheduled Pickup:</td>
+            <td>{{ order.pickup_date|date:"F d, Y" }} at {{ order.pickup_time_slot }}</td>
+        </tr>
+        {% if order.partner %}
+        <tr>
+            <td>Assigned Partner:</td>
+            <td>{{ order.partner.business_name }}</td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+<p>Our team will arrive at your location during the scheduled pickup time. Please ensure your laundry is ready for collection.</p>
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">Track Order</a>
+</center>
+{% endif %}
+
+<p>Thank you for choosing LaundryConnect!</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

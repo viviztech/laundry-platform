@@ -1,0 +1,48 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Order Picked Up - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>Laundry Picked Up Successfully</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>Your laundry has been successfully picked up and is on its way to our facility.</p>
+
+<div class="info-box success-box">
+    <strong>Order Number:</strong> {{ order.order_number }}
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Order Status:</td>
+            <td><strong>{{ order.get_status_display }}</strong></td>
+        </tr>
+        <tr>
+            <td>Picked Up At:</td>
+            <td>{{ order.updated_at|date:"F d, Y H:i" }}</td>
+        </tr>
+        {% if order.partner %}
+        <tr>
+            <td>Partner:</td>
+            <td>{{ order.partner.business_name }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Expected Delivery:</td>
+            <td>{{ order.delivery_date|date:"F d, Y" }}</td>
+        </tr>
+    </table>
+</div>
+
+<p>We'll begin processing your laundry immediately. You'll receive another notification once the cleaning process starts.</p>
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">Track Order</a>
+</center>
+{% endif %}
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

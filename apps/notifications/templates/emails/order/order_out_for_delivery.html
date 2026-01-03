@@ -1,0 +1,54 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Out for Delivery - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>Your Order is Out for Delivery</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>Your freshly cleaned laundry is on its way to you!</p>
+
+<div class="info-box success-box">
+    <strong>Order Number:</strong> {{ order.order_number }}
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Order Status:</td>
+            <td><strong>{{ order.get_status_display }}</strong></td>
+        </tr>
+        <tr>
+            <td>Out for Delivery:</td>
+            <td>{{ order.updated_at|date:"F d, Y H:i" }}</td>
+        </tr>
+        {% if order.partner %}
+        <tr>
+            <td>Delivery Partner:</td>
+            <td>{{ order.partner.business_name }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Delivery Address:</td>
+            <td>{{ order.address.get_full_address }}</td>
+        </tr>
+        <tr>
+            <td>Expected Delivery:</td>
+            <td>{{ order.delivery_date|date:"F d, Y" }} at {{ order.delivery_time_slot }}</td>
+        </tr>
+    </table>
+</div>
+
+<p>Our delivery partner is heading to your location. Please keep your phone handy in case they need to contact you.</p>
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">Track Delivery</a>
+</center>
+{% endif %}
+
+<p>Thank you for your patience!</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

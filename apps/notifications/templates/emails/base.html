@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LaundryConnect{% endblock %}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #ffffff;
+            margin: 20px;
+            padding: 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .content {
+            padding: 30px 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #667eea;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+        .button:hover {
+            background-color: #5568d3;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #6c757d;
+            border-radius: 0 0 8px 8px;
+        }
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .info-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .success-box {
+            background-color: #d4edda;
+            border-left-color: #28a745;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left-color: #ffc107;
+        }
+        .danger-box {
+            background-color: #f8d7da;
+            border-left-color: #dc3545;
+        }
+        h2 {
+            color: #667eea;
+            font-size: 20px;
+            margin-top: 0;
+        }
+        .order-details {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .order-details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .order-details td {
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .order-details td:first-child {
+            font-weight: 500;
+            width: 40%;
+        }
+        .order-details tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>LaundryConnect</h1>
+        </div>
+
+        <div class="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+        <div class="footer">
+            <p>
+                <strong>LaundryConnect</strong><br>
+                Your trusted laundry service partner
+            </p>
+            <p>
+                <a href="#">View in Browser</a> |
+                <a href="#">Unsubscribe</a> |
+                <a href="#">Contact Support</a>
+            </p>
+            <p>
+                &copy; 2026 LaundryConnect. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

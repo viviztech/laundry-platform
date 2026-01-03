@@ -129,8 +129,17 @@ class Order(models.Model):
     customer_notes = models.TextField(blank=True)
     internal_notes = models.TextField(blank=True)  # For staff use
 
-    # Partner assignment (to be linked with partner model in future)
-    assigned_partner_id = models.UUIDField(null=True, blank=True, db_index=True)
+    # Partner assignment
+    assigned_partner = models.ForeignKey(
+        'partners.Partner',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='assigned_orders'
+    )
+    partner_accepted_at = models.DateTimeField(null=True, blank=True)
+    partner_rejected_at = models.DateTimeField(null=True, blank=True)
+    partner_rejection_reason = models.TextField(blank=True)
 
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)

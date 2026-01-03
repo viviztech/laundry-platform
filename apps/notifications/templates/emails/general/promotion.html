@@ -1,0 +1,102 @@
+{% extends "emails/base.html" %}
+
+{% block title %}{{ promo_title|default:"Special Offer" }} - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>{{ promo_title|default:"Exclusive Offer Just for You!" }}</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>We have an exciting offer that we thought you'd love!</p>
+
+<div class="info-box success-box">
+    <strong>{{ promo_headline|default:"Limited Time Offer" }}</strong>
+</div>
+
+<div style="text-align: center; padding: 30px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; margin: 20px 0;">
+    <h1 style="color: white; font-size: 48px; margin: 0;">{{ promo_discount|default:"20% OFF" }}</h1>
+    <p style="font-size: 20px; margin: 10px 0; color: white;">{{ promo_subtitle|default:"On All Laundry Services" }}</p>
+</div>
+
+{% if promo_code %}
+<div class="info-box">
+    <center>
+        <p style="margin: 0; font-size: 14px;">Use Promo Code</p>
+        <h3 style="margin: 10px 0; font-size: 32px; letter-spacing: 2px; color: #667eea;">{{ promo_code }}</h3>
+        <p style="margin: 0; font-size: 12px; color: #6c757d;">Click to copy code</p>
+    </center>
+</div>
+{% endif %}
+
+{% if promo_description %}
+<p>{{ promo_description|safe }}</p>
+{% else %}
+<p>Don't miss out on this amazing opportunity to save on premium laundry services. Whether it's regular washing, dry cleaning, or ironing - we've got you covered!</p>
+{% endif %}
+
+<div class="order-details">
+    <table>
+        {% if promo_validity %}
+        <tr>
+            <td>Valid Until:</td>
+            <td><strong>{{ promo_validity }}</strong></td>
+        </tr>
+        {% endif %}
+        {% if promo_min_order %}
+        <tr>
+            <td>Minimum Order:</td>
+            <td><strong>₹{{ promo_min_order }}</strong></td>
+        </tr>
+        {% endif %}
+        {% if promo_max_discount %}
+        <tr>
+            <td>Maximum Discount:</td>
+            <td><strong>₹{{ promo_max_discount }}</strong></td>
+        </tr>
+        {% endif %}
+        {% if promo_applicable_services %}
+        <tr>
+            <td>Applicable On:</td>
+            <td>{{ promo_applicable_services }}</td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+{% if promo_terms %}
+<div class="info-box warning-box">
+    <strong>Terms & Conditions:</strong><br>
+    <small>{{ promo_terms|safe }}</small>
+</div>
+{% else %}
+<div class="info-box warning-box">
+    <strong>Terms & Conditions:</strong><br>
+    <small>
+        • Offer valid for limited time only<br>
+        • Cannot be combined with other offers<br>
+        • Applicable on selected services only<br>
+        • LaundryConnect reserves the right to modify or cancel this offer
+    </small>
+</div>
+{% endif %}
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">{{ promo_cta|default:"Claim Offer Now" }}</a>
+</center>
+{% endif %}
+
+<p style="text-align: center; margin-top: 30px;">
+    <strong>Share the love!</strong><br>
+    <small>Forward this email to friends and family</small>
+</p>
+
+<p>Thank you for being a valued customer!</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+
+<p style="text-align: center; font-size: 11px; color: #6c757d; margin-top: 30px;">
+    You're receiving this because you opted in to promotional emails.<br>
+    Don't want to receive promotional offers? <a href="#">Update your preferences</a>
+</p>
+{% endblock %}

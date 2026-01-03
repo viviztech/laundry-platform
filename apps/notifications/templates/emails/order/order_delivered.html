@@ -1,0 +1,44 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Order Delivered - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>Order Delivered!</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>Great news! Your order has been successfully delivered.</p>
+
+<div class="info-box success-box">
+    <strong>Order Number:</strong> {{ order.order_number }}
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Order Status:</td>
+            <td><strong style="color: #28a745;">Delivered</strong></td>
+        </tr>
+        <tr>
+            <td>Total Amount:</td>
+            <td><strong>₹{{ order.total_amount }}</strong></td>
+        </tr>
+        <tr>
+            <td>Delivered On:</td>
+            <td>{{ order.completed_at|date:"F d, Y at h:i A" }}</td>
+        </tr>
+    </table>
+</div>
+
+<p>We hope you're satisfied with our service! Your feedback helps us improve.</p>
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">Rate Your Experience</a>
+</center>
+{% endif %}
+
+<p>Thank you for choosing LaundryConnect!</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

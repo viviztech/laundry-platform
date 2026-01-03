@@ -1,0 +1,53 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Payment Failed - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>Payment Failed</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>We encountered an issue while processing your payment.</p>
+
+<div class="info-box danger-box">
+    <strong>Payment ID:</strong> {{ payment.payment_id }}<br>
+    <strong>Status:</strong> Failed
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Amount:</td>
+            <td><strong>₹{{ payment.amount }}</strong></td>
+        </tr>
+        <tr>
+            <td>Payment Method:</td>
+            <td>{{ payment.get_method_display }}</td>
+        </tr>
+        {% if payment.failure_reason %}
+        <tr>
+            <td>Reason:</td>
+            <td>{{ payment.failure_reason }}</td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+<p><strong>What you can do:</strong></p>
+<ul>
+    <li>Check if you have sufficient balance in your account</li>
+    <li>Verify your payment details are correct</li>
+    <li>Try a different payment method</li>
+    <li>Contact your bank if the issue persists</li>
+</ul>
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">Retry Payment</a>
+</center>
+{% endif %}
+
+<p>If you need assistance, please contact our support team.</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

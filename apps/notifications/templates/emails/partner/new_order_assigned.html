@@ -1,0 +1,82 @@
+{% extends "emails/base.html" %}
+
+{% block title %}New Order Assignment - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>New Order Assignment</h2>
+
+<p>Hi {{ user.first_name|default:"Partner" }},</p>
+
+<p>A new order has been assigned to your business. Please review and accept it as soon as possible.</p>
+
+<div class="info-box success-box">
+    <strong>Order Number:</strong> {{ order.order_number }}<br>
+    <strong>Action Required:</strong> Accept or Decline within 30 minutes
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Customer:</td>
+            <td><strong>{{ order.user.get_full_name }}</strong></td>
+        </tr>
+        <tr>
+            <td>Order Value:</td>
+            <td><strong>₹{{ order.total_amount }}</strong></td>
+        </tr>
+        <tr>
+            <td>Your Earning:</td>
+            <td><strong>₹{{ order.partner_commission|default:"TBD" }}</strong></td>
+        </tr>
+        <tr>
+            <td>Pickup Schedule:</td>
+            <td>{{ order.pickup_date|date:"F d, Y" }} at {{ order.pickup_time_slot }}</td>
+        </tr>
+        <tr>
+            <td>Delivery Schedule:</td>
+            <td>{{ order.delivery_date|date:"F d, Y" }} at {{ order.delivery_time_slot }}</td>
+        </tr>
+        <tr>
+            <td>Distance:</td>
+            <td>{{ order.distance|default:"N/A" }} km</td>
+        </tr>
+    </table>
+</div>
+
+<p><strong>Order Summary:</strong></p>
+<ul>
+    {% for item in order.items.all %}
+    <li>{{ item.service.name }} - {{ item.quantity }} {{ item.service.unit }} (₹{{ item.price }})</li>
+    {% empty %}
+    <li>Details available after acceptance</li>
+    {% endfor %}
+</ul>
+
+<p><strong>Customer Address:</strong></p>
+<div class="info-box">
+    {{ order.address.get_full_address }}<br>
+    {% if order.address.landmark %}
+    Landmark: {{ order.address.landmark }}<br>
+    {% endif %}
+    Phone: {{ order.user.phone }}
+</div>
+
+{% if order.special_instructions %}
+<div class="info-box warning-box">
+    <strong>Special Instructions:</strong><br>
+    {{ order.special_instructions }}
+</div>
+{% endif %}
+
+<p><strong>Important:</strong> Please accept or decline this order within 30 minutes. If no action is taken, the order will be automatically reassigned.</p>
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">Accept Order</a>
+</center>
+{% endif %}
+
+<p>Thank you for being a valued partner!</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

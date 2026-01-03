@@ -1,0 +1,54 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Order Cancelled - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>Order Cancelled</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>Your order has been cancelled as requested.</p>
+
+<div class="info-box warning-box">
+    <strong>Order Number:</strong> {{ order.order_number }}
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Order Status:</td>
+            <td><strong>{{ order.get_status_display }}</strong></td>
+        </tr>
+        <tr>
+            <td>Cancelled At:</td>
+            <td>{{ order.updated_at|date:"F d, Y H:i" }}</td>
+        </tr>
+        <tr>
+            <td>Order Amount:</td>
+            <td>₹{{ order.total_amount }}</td>
+        </tr>
+        {% if order.cancellation_reason %}
+        <tr>
+            <td>Cancellation Reason:</td>
+            <td>{{ order.cancellation_reason }}</td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+{% if order.payment_status == 'completed' %}
+<p>Your payment of <strong>₹{{ order.total_amount }}</strong> will be refunded to your original payment method within 5-7 business days.</p>
+{% else %}
+<p>No payment has been charged for this order.</p>
+{% endif %}
+
+<p>We're sorry to see you go. If there was an issue with your order, please let us know so we can improve our service.</p>
+
+<center>
+    <a href="{{ action_url }}" class="button">Place New Order</a>
+</center>
+
+<p>We hope to serve you again soon!</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

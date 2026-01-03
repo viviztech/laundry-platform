@@ -1,0 +1,66 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Partner Account Approved - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>Welcome to LaundryConnect Partner Network!</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>Congratulations! Your partner account has been approved and activated.</p>
+
+<div class="info-box success-box">
+    <strong>Your partnership with LaundryConnect starts now!</strong>
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Business Name:</td>
+            <td><strong>{{ partner.business_name }}</strong></td>
+        </tr>
+        <tr>
+            <td>Partner ID:</td>
+            <td>{{ partner.partner_id }}</td>
+        </tr>
+        <tr>
+            <td>Account Status:</td>
+            <td><strong style="color: #28a745;">Active</strong></td>
+        </tr>
+        <tr>
+            <td>Approved On:</td>
+            <td>{{ partner.updated_at|date:"F d, Y H:i" }}</td>
+        </tr>
+        <tr>
+            <td>Service Areas:</td>
+            <td>{{ partner.service_areas|default:"All Areas" }}</td>
+        </tr>
+    </table>
+</div>
+
+<p><strong>What's Next?</strong></p>
+
+<ul>
+    <li><strong>Complete Your Profile:</strong> Add your services, pricing, and availability</li>
+    <li><strong>Set Up Operations:</strong> Configure your working hours and service areas</li>
+    <li><strong>Start Receiving Orders:</strong> You'll be notified when orders are assigned to you</li>
+    <li><strong>Track Earnings:</strong> Monitor your performance and earnings through the dashboard</li>
+</ul>
+
+<p>You can now start receiving and processing orders from customers in your service area.</p>
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">Go to Partner Dashboard</a>
+</center>
+{% endif %}
+
+<div class="info-box">
+    <strong>Need Help?</strong><br>
+    Check out our Partner Guide or contact our partner support team at <a href="mailto:partners@laundryconnect.com">partners@laundryconnect.com</a>
+</div>
+
+<p>We're excited to have you as part of our network. Let's build a successful partnership together!</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

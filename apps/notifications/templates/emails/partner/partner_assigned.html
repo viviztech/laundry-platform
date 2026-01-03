@@ -1,0 +1,72 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Order Assigned - LaundryConnect Partner{% endblock %}
+
+{% block content %}
+<h2>New Order Assigned to You</h2>
+
+<p>Hi {{ user.first_name|default:"Partner" }},</p>
+
+<p>You have been assigned to a new laundry order.</p>
+
+<div class="info-box success-box">
+    <strong>Order Number:</strong> {{ order.order_number }}
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Customer Name:</td>
+            <td><strong>{{ order.user.get_full_name }}</strong></td>
+        </tr>
+        <tr>
+            <td>Order Total:</td>
+            <td><strong>₹{{ order.total_amount }}</strong></td>
+        </tr>
+        <tr>
+            <td>Pickup Date:</td>
+            <td>{{ order.pickup_date|date:"F d, Y" }}</td>
+        </tr>
+        <tr>
+            <td>Pickup Time:</td>
+            <td>{{ order.pickup_time_slot }}</td>
+        </tr>
+        <tr>
+            <td>Pickup Address:</td>
+            <td>{{ order.address.get_full_address }}</td>
+        </tr>
+        <tr>
+            <td>Delivery Date:</td>
+            <td>{{ order.delivery_date|date:"F d, Y" }}</td>
+        </tr>
+    </table>
+</div>
+
+<p><strong>Services Requested:</strong></p>
+<ul>
+    {% for item in order.items.all %}
+    <li>{{ item.service.name }} - {{ item.quantity }} {{ item.service.unit }}</li>
+    {% empty %}
+    <li>No specific items listed</li>
+    {% endfor %}
+</ul>
+
+{% if order.special_instructions %}
+<div class="info-box warning-box">
+    <strong>Special Instructions:</strong><br>
+    {{ order.special_instructions }}
+</div>
+{% endif %}
+
+<p>Please confirm the assignment and ensure timely pickup and delivery.</p>
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">View Order Details</a>
+</center>
+{% endif %}
+
+<p>If you have any questions or need to report an issue, please contact our support team immediately.</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

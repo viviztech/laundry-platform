@@ -59,7 +59,7 @@ class IsOwnerOrAdmin(permissions.BasePermission):
         description="Get all payments. Users see only their payments, admins see all.",
         parameters=[
             OpenApiParameter(name='status', description='Filter by payment status'),
-            OpenApiParameter(name='payment_method', description='Filter by payment method'),
+            OpenApiParameter(name='method', description='Filter by payment method'),
         ],
     ),
     retrieve=extend_schema(
@@ -84,7 +84,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """Get payments based on user role."""
         queryset = Payment.objects.select_related(
-            'user', 'order', 'saved_payment_method'
+            'user', 'order'
         ).prefetch_related('refunds')
 
         # Non-admin users can only see their own payments
@@ -97,9 +97,9 @@ class PaymentViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(status=payment_status)
 
         # Filter by payment method
-        payment_method = self.request.query_params.get('payment_method')
-        if payment_method:
-            queryset = queryset.filter(payment_method=payment_method)
+        method = self.request.query_params.get('method')
+        if method:
+            queryset = queryset.filter(method=method)
 
         return queryset.order_by('-created_at')
 
@@ -147,8 +147,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
             order=order,
             user=request.user,
             amount=order.total_amount,
-            payment_method=data['payment_method'],
-            saved_payment_method_id=data.get('saved_payment_method_id'),
+            method=data['method'],
             gateway=data['gateway'],
             status='pending',
         )
@@ -187,8 +186,9 @@ class PaymentViewSet(viewsets.ModelViewSet):
 
         payment.gateway_payment_id = serializer.validated_data['gateway_payment_id']
         payment.gateway_order_id = serializer.validated_data.get('gateway_order_id', '')
+        payment.gateway_signature = serializer.validated_data.get('gateway_signature', '')
         payment.status = 'completed'
-        payment.paid_at = timezone.now()
+        payment.completed_at = timezone.now()
         payment.save()
 
         # Update order payment status

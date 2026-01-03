@@ -24,19 +24,19 @@ class PaymentAdmin(admin.ModelAdmin):
     """Admin configuration for Payment model."""
 
     list_display = (
-        'payment_id', 'order', 'user', 'amount', 'payment_method',
+        'payment_id', 'order', 'user', 'amount', 'method',
         'gateway', 'status', 'created_at'
     )
     list_filter = (
-        'status', 'payment_method', 'gateway', 'created_at', 'paid_at'
+        'status', 'method', 'gateway', 'created_at'
     )
     search_fields = (
         'payment_id', 'order__order_id', 'user__email',
-        'gateway_transaction_id', 'gateway_payment_id'
+        'gateway_payment_id', 'gateway_order_id'
     )
     ordering = ('-created_at',)
     readonly_fields = (
-        'payment_id', 'net_amount', 'created_at', 'updated_at', 'paid_at'
+        'payment_id', 'net_amount', 'created_at', 'updated_at'
     )
 
     fieldsets = (
@@ -47,19 +47,19 @@ class PaymentAdmin(admin.ModelAdmin):
             )
         }),
         ('Payment Method', {
-            'fields': ('payment_method', 'saved_payment_method')
+            'fields': ('method',)
         }),
         ('Gateway Information', {
             'fields': (
-                'gateway', 'gateway_payment_id', 'gateway_transaction_id',
-                'gateway_order_id'
+                'gateway', 'gateway_payment_id', 'gateway_order_id',
+                'gateway_signature'
             )
         }),
         ('Status', {
-            'fields': ('status', 'paid_at', 'failure_reason')
+            'fields': ('status', 'failure_reason')
         }),
         ('Additional Information', {
-            'fields': ('notes', 'metadata'),
+            'fields': ('metadata',),
             'classes': ('collapse',)
         }),
         ('Timestamps', {
@@ -67,7 +67,7 @@ class PaymentAdmin(admin.ModelAdmin):
         }),
     )
 
-    list_select_related = ('order', 'user', 'saved_payment_method')
+    list_select_related = ('order', 'user')
 
     def get_readonly_fields(self, request, obj=None):
         """Make certain fields readonly after creation."""
@@ -82,20 +82,16 @@ class WalletAdmin(admin.ModelAdmin):
     """Admin configuration for Wallet model."""
 
     list_display = (
-        'user', 'balance', 'is_active', 'total_credited',
-        'total_debited', 'updated_at'
+        'user', 'balance', 'is_active', 'updated_at'
     )
     list_filter = ('is_active', 'created_at', 'updated_at')
     search_fields = ('user__email', 'user__first_name', 'user__last_name')
     ordering = ('-balance',)
-    readonly_fields = ('balance', 'total_credited', 'total_debited', 'created_at', 'updated_at')
+    readonly_fields = ('balance', 'created_at', 'updated_at')
 
     fieldsets = (
         ('Wallet Information', {
             'fields': ('user', 'balance', 'is_active')
-        }),
-        ('Statistics', {
-            'fields': ('total_credited', 'total_debited')
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at')
@@ -163,13 +159,13 @@ class RefundAdmin(admin.ModelAdmin):
     """Admin configuration for Refund model."""
 
     list_display = (
-        'refund_id', 'payment', 'amount', 'refund_type',
-        'status', 'requested_by', 'created_at'
+        'refund_id', 'payment', 'amount', 'reason',
+        'status', 'user', 'created_at'
     )
-    list_filter = ('status', 'refund_type', 'created_at', 'processed_at')
+    list_filter = ('status', 'reason', 'created_at', 'processed_at')
     search_fields = (
         'refund_id', 'payment__payment_id', 'payment__order__order_id',
-        'requested_by__email', 'gateway_refund_id'
+        'user__email', 'gateway_refund_id'
     )
     ordering = ('-created_at',)
     readonly_fields = (
@@ -180,20 +176,20 @@ class RefundAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Refund Information', {
             'fields': (
-                'refund_id', 'payment', 'amount', 'refund_type'
+                'refund_id', 'payment', 'amount', 'reason'
             )
         }),
         ('Request Information', {
-            'fields': ('reason', 'requested_by', 'admin_notes')
+            'fields': ('user', 'description')
         }),
         ('Status', {
             'fields': (
                 'status', 'processed_at', 'processed_by',
-                'completed_at', 'failure_reason'
+                'completed_at', 'error_message'
             )
         }),
         ('Gateway Information', {
-            'fields': ('gateway_refund_id', 'refund_to_wallet')
+            'fields': ('gateway_refund_id',)
         }),
         ('Additional Information', {
             'fields': ('metadata',),
@@ -205,14 +201,14 @@ class RefundAdmin(admin.ModelAdmin):
     )
 
     list_select_related = (
-        'payment__order', 'requested_by', 'processed_by'
+        'payment__order', 'user', 'processed_by'
     )
 
     def get_readonly_fields(self, request, obj=None):
         """Make certain fields readonly after creation."""
         readonly = list(self.readonly_fields)
         if obj:  # Editing an existing object
-            readonly.extend(['payment', 'amount', 'refund_type', 'requested_by'])
+            readonly.extend(['payment', 'amount', 'reason', 'user'])
         return readonly
 
 

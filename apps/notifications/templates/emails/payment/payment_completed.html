@@ -1,0 +1,54 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Payment Successful - LaundryConnect{% endblock %}
+
+{% block content %}
+<h2>Payment Successful</h2>
+
+<p>Hi {{ user.first_name|default:"there" }},</p>
+
+<p>Your payment has been successfully processed.</p>
+
+<div class="info-box success-box">
+    <strong>Payment ID:</strong> {{ payment.payment_id }}
+</div>
+
+<div class="order-details">
+    <table>
+        <tr>
+            <td>Amount Paid:</td>
+            <td><strong>₹{{ payment.amount }}</strong></td>
+        </tr>
+        <tr>
+            <td>Payment Method:</td>
+            <td>{{ payment.get_method_display }}</td>
+        </tr>
+        <tr>
+            <td>Payment Gateway:</td>
+            <td>{{ payment.get_gateway_display }}</td>
+        </tr>
+        <tr>
+            <td>Status:</td>
+            <td><strong style="color: #28a745;">Completed</strong></td>
+        </tr>
+        <tr>
+            <td>Date & Time:</td>
+            <td>{{ payment.completed_at|date:"F d, Y at h:i A" }}</td>
+        </tr>
+    </table>
+</div>
+
+{% if order %}
+<p>This payment is for Order #{{ order.order_number }}.</p>
+{% endif %}
+
+{% if action_url %}
+<center>
+    <a href="{{ action_url }}" class="button">View Receipt</a>
+</center>
+{% endif %}
+
+<p>Thank you for your payment!</p>
+
+<p>Best regards,<br>The LaundryConnect Team</p>
+{% endblock %}

@@ -21,11 +21,11 @@ export const login = createAsyncThunk(
   'auth/login',
   async (credentials: LoginCredentials, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post<AuthResponse>(API_ENDPOINTS.AUTH.LOGIN, credentials);
-      const { user, tokens } = response.data;
+      const response = await apiClient.post<any>(API_ENDPOINTS.AUTH.LOGIN, credentials);
+      const { user, access, refresh } = response.data;
 
       // Store tokens
-      await apiClient.setTokens(tokens.access, tokens.refresh);
+      await apiClient.setTokens(access, refresh);
 
       return user;
     } catch (error: any) {

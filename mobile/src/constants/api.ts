@@ -19,10 +19,10 @@ export const API_CONFIG = {
 export const API_ENDPOINTS = {
   // Authentication
   AUTH: {
-    REGISTER: '/accounts/register/',
-    LOGIN: '/accounts/login/',
-    LOGOUT: '/accounts/logout/',
-    TOKEN_REFRESH: '/accounts/token/refresh/',
+    REGISTER: '/accounts/auth/register/',
+    LOGIN: '/accounts/auth/login/',
+    LOGOUT: '/accounts/auth/logout/',
+    TOKEN_REFRESH: '/accounts/auth/token/refresh/',
     VERIFY_OTP: '/accounts/verify-otp/',
     RESEND_OTP: '/accounts/resend-otp/',
     FORGOT_PASSWORD: '/accounts/forgot-password/',
@@ -31,8 +31,8 @@ export const API_ENDPOINTS = {
 
   // User Profile
   PROFILE: {
-    ME: '/accounts/profile/',
-    UPDATE: '/accounts/profile/',
+    ME: '/accounts/me/',
+    UPDATE: '/accounts/me/',
     ADDRESSES: '/accounts/addresses/',
     ADDRESS_DETAIL: (id: string) => `/accounts/addresses/${id}/`,
   },
@@ -66,10 +66,10 @@ export const API_ENDPOINTS = {
 
   // Notifications
   NOTIFICATIONS: {
-    LIST: '/notifications/',
-    UNREAD_COUNT: '/notifications/unread_count/',
-    MARK_READ: (id: string) => `/notifications/${id}/mark_read/`,
-    MARK_ALL_READ: '/notifications/mark_all_read/',
+    LIST: '/notifications/notifications/',
+    UNREAD_COUNT: '/notifications/notifications/unread_count/',
+    MARK_READ: (id: string) => `/notifications/notifications/${id}/mark_read/`,
+    MARK_ALL_READ: '/notifications/notifications/mark_all_read/',
     PREFERENCES: '/notifications/preferences/me/',
   },
 

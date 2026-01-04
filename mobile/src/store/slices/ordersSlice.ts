@@ -22,8 +22,9 @@ export const fetchOrders = createAsyncThunk(
   'orders/fetchOrders',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get<Order[]>(API_ENDPOINTS.ORDERS.LIST);
-      return response.data;
+      const response = await apiClient.get<any>(API_ENDPOINTS.ORDERS.LIST);
+      // Handle paginated response
+      return response.data.results || response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch orders');
     }
@@ -123,7 +124,7 @@ const ordersSlice = createSlice({
         state.isLoading = false;
         state.orders = action.payload;
         state.activeOrders = action.payload.filter(
-          (order) =>
+          (order: Order) =>
             !['delivered', 'cancelled'].includes(order.status)
         );
       })

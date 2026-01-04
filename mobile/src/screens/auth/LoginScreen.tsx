@@ -33,7 +33,7 @@ export default function LoginScreen({ navigation }: any) {
     try {
       await dispatch(
         login({
-          email_or_phone: emailOrPhone,
+          email: emailOrPhone,
           password,
         })
       ).unwrap();

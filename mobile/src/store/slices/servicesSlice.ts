@@ -22,8 +22,9 @@ export const fetchServiceCategories = createAsyncThunk(
   'services/fetchCategories',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get<ServiceCategory[]>(API_ENDPOINTS.SERVICES.CATEGORIES);
-      return response.data;
+      const response = await apiClient.get<any>(API_ENDPOINTS.SERVICES.CATEGORIES);
+      // Handle paginated response
+      return response.data.results || response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch categories');
     }
@@ -32,13 +33,14 @@ export const fetchServiceCategories = createAsyncThunk(
 
 export const fetchServiceItems = createAsyncThunk(
   'services/fetchItems',
-  async (categoryId?: string, { rejectWithValue }) => {
+  async (categoryId: string | undefined, { rejectWithValue }) => {
     try {
       const url = categoryId
         ? `${API_ENDPOINTS.SERVICES.ITEMS}?category=${categoryId}`
         : API_ENDPOINTS.SERVICES.ITEMS;
-      const response = await apiClient.get<ServiceItem[]>(url);
-      return response.data;
+      const response = await apiClient.get<any>(url);
+      // Handle paginated response
+      return response.data.results || response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch service items');
     }

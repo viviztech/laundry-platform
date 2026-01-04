@@ -48,7 +48,7 @@ export interface Address {
 
 // Auth Types
 export interface LoginCredentials {
-  email_or_phone: string;
+  email: string;
   password: string;
 }
 

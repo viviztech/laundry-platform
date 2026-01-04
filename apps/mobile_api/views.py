@@ -16,8 +16,8 @@ from apps.orders.models import Order
 from apps.orders.serializers import OrderSerializer
 from apps.payments.models import Wallet
 from apps.notifications.models import Notification
-from apps.services.models import ServiceCategory, ServiceItem
-from apps.services.serializers import ServiceCategorySerializer, ServiceItemSerializer
+from apps.services.models import ServiceCategory, Service
+from apps.services.serializers import ServiceCategorySerializer, ServiceSerializer
 
 
 @api_view(['GET'])
@@ -80,7 +80,7 @@ def mobile_services(request):
     category_id = request.GET.get('category')
 
     # Base query
-    items = ServiceItem.objects.filter(is_active=True)
+    items = Service.objects.filter(is_active=True)
 
     # Filter by category if provided
     if category_id:
@@ -94,7 +94,7 @@ def mobile_services(request):
     items = items[:limit]
 
     return Response({
-        'items': ServiceItemSerializer(items, many=True).data,
+        'items': ServiceSerializer(items, many=True).data,
         'count': items.count(),
     })
 

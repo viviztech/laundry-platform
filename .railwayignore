@@ -1,0 +1,67 @@
+# Railway Ignore File - Files/directories to exclude from deployment
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documentation (optional - comment out if you want docs deployed)
+docs/
+*.md
+!README.md
+
+# Local development
+*.sqlite3
+db.sqlite3
+.env.local
+.env.development
+local_settings.py
+
+# Media files (use cloud storage in production)
+media/
+
+# Static files (will be collected during build)
+staticfiles/
+static/
+
+# Node modules (if any)
+node_modules/
+mobile/node_modules/
+
+# Mobile app (React Native - not needed on backend)
+mobile/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+.gitattributes

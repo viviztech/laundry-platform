@@ -115,6 +115,10 @@ class UserProfile(models.Model):
     receive_notifications = models.BooleanField(default=True)
     receive_marketing_emails = models.BooleanField(default=False)
 
+    # Push Notification Token
+    fcm_token = models.TextField(blank=True, help_text='Firebase Cloud Messaging token for push notifications')
+    fcm_platform = models.CharField(max_length=10, blank=True, choices=[('ios', 'iOS'), ('android', 'Android')])
+
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -18,6 +18,7 @@ from .serializers import (
     ChangePasswordSerializer,
     AddressSerializer,
     UserProfileSerializer,
+    FCMTokenSerializer,
 )
 
 
@@ -234,7 +235,11 @@ class AddressListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         """Set the user to the current authenticated user."""
-        serializer.save(user=self.request.user)
+        instance = serializer.save(user=self.request.user)
+
+        if instance.is_default:
+            # Unset all other default addresses for this user
+            Address.objects.filter(user=self.request.user, is_default=True).exclude(pk=instance.pk).update(is_default=False)
 
 
 @extend_schema_view(
@@ -276,3 +281,48 @@ class AddressDetailView(generics.RetrieveUpdateDestroyAPIView):
         """Soft delete: mark as inactive instead of deleting."""
         instance.is_active = False
         instance.save()
+
+    def perform_update(self, serializer):
+        """When setting is_default to True, unset all other default addresses."""
+        instance = serializer.save()
+
+        if instance.is_default:
+            # Unset all other default addresses for this user
+            Address.objects.filter(user=self.request.user, is_default=True).exclude(pk=instance.pk).update(is_default=False)
+
+
+@extend_schema(
+    summary="Register FCM token",
+    description="Register or update Firebase Cloud Messaging token for push notifications.",
+    request=FCMTokenSerializer,
+    responses={
+        200: {'description': 'Token registered successfully'},
+        400: {'description': 'Validation error'},
+    },
+)
+class RegisterFCMTokenView(APIView):
+    """
+    API endpoint to register FCM push notification token.
+    """
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        """Register or update FCM token for the current user."""
+        serializer = FCMTokenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Get or create user profile
+        profile, created = UserProfile.objects.get_or_create(user=request.user)
+
+        # Update FCM token
+        profile.fcm_token = serializer.validated_data['token']
+        profile.fcm_platform = serializer.validated_data['platform']
+        profile.save(update_fields=['fcm_token', 'fcm_platform'])
+
+        return Response(
+            {
+                "message": "FCM token registered successfully.",
+                "platform": profile.fcm_platform
+            },
+            status=status.HTTP_200_OK
+        )

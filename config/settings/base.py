@@ -13,6 +13,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-temp-key-change-in-pr
 
 # Application definition
 DJANGO_APPS = [
+    "unfold",  # Modern admin UI - must be before django.contrib.admin
     "daphne",  # Must be first for Channels support
     "django.contrib.admin",
     "django.contrib.auth",
@@ -32,6 +33,7 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
+    "apps.core",
     "apps.accounts",
     "apps.services",
     "apps.orders",
@@ -224,3 +226,189 @@ CELERY_TIMEZONE = TIME_ZONE
 
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.User'
+
+# ===========================
+# Django Unfold Configuration
+# ===========================
+UNFOLD = {
+    "SITE_TITLE": "LaundryConnect Admin",
+    "SITE_HEADER": "LaundryConnect Management",
+    "SITE_URL": "/",
+    "SITE_SYMBOL": "laundry",  # Symbol from icon set
+    "SHOW_HISTORY": True,  # Show history on detail pages
+    "SHOW_VIEW_ON_SITE": True,  # Show view on site button
+    "ENVIRONMENT": "config.settings.base.environment_callback",
+    "DASHBOARD_CALLBACK": "config.settings.base.dashboard_callback",
+    "COLORS": {
+        "primary": {
+            "50": "250 245 255",
+            "100": "243 232 255",
+            "200": "233 213 255",
+            "300": "216 180 254",
+            "400": "192 132 252",
+            "500": "168 85 247",
+            "600": "147 51 234",
+            "700": "126 34 206",
+            "800": "107 33 168",
+            "900": "88 28 135",
+            "950": "59 7 100",
+        },
+    },
+    "EXTENSIONS": {
+        "modeltranslation": {
+            "flags": {
+                "en": "🇬🇧",
+                "fr": "🇫🇷",
+                "nl": "🇧🇪",
+            },
+        },
+    },
+    "SIDEBAR": {
+        "show_search": True,  # Search in sidebar
+        "show_all_applications": True,  # Dropdown with all applications and models
+        "navigation": [
+            {
+                "title": "Navigation",
+                "separator": True,  # Top border
+                "items": [
+                    {
+                        "title": "Dashboard",
+                        "icon": "dashboard",
+                        "link": "/admin/",
+                    },
+                ],
+            },
+            {
+                "title": "Core Management",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "Users & Accounts",
+                        "icon": "people",
+                        "link": "/admin/accounts/user/",
+                    },
+                    {
+                        "title": "Orders",
+                        "icon": "shopping_cart",
+                        "link": "/admin/orders/order/",
+                    },
+                    {
+                        "title": "Services",
+                        "icon": "local_laundry_service",
+                        "link": "/admin/services/service/",
+                    },
+                    {
+                        "title": "Partners",
+                        "icon": "business",
+                        "link": "/admin/partners/partner/",
+                    },
+                ],
+            },
+            {
+                "title": "Payments & Finance",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "Payments",
+                        "icon": "payment",
+                        "link": "/admin/payments/payment/",
+                    },
+                    {
+                        "title": "Wallets",
+                        "icon": "account_balance_wallet",
+                        "link": "/admin/payments/wallet/",
+                    },
+                ],
+            },
+            {
+                "title": "Analytics & Reports",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "Analytics Dashboard",
+                        "icon": "analytics",
+                        "link": "/admin/analytics/",
+                    },
+                ],
+            },
+        ],
+    },
+}
+
+
+def environment_callback(request):
+    """Return environment badge for admin header."""
+    import os
+    env = os.getenv('DJANGO_ENV', 'development')
+
+    if env == 'production':
+        return ["production", "danger"]  # Red badge
+    elif env == 'staging':
+        return ["staging", "warning"]  # Yellow badge
+    else:
+        return ["development", "info"]  # Blue badge
+
+
+def dashboard_callback(request, context):
+    """Custom dashboard with analytics."""
+    from django.utils.timezone import now
+    from datetime import timedelta
+    from apps.orders.models import Order
+    from apps.payments.models import Payment
+    from apps.partners.models import Partner
+    from django.db.models import Sum, Count
+
+    today = now().date()
+    week_ago = today - timedelta(days=7)
+    month_ago = today - timedelta(days=30)
+
+    # Calculate metrics
+    orders_today = Order.objects.filter(created_at__date=today).count()
+    orders_week = Order.objects.filter(created_at__date__gte=week_ago).count()
+    orders_month = Order.objects.filter(created_at__date__gte=month_ago).count()
+
+    revenue_today = Payment.objects.filter(
+        created_at__date=today,
+        status='completed'
+    ).aggregate(total=Sum('amount'))['total'] or 0
+
+    revenue_week = Payment.objects.filter(
+        created_at__date__gte=week_ago,
+        status='completed'
+    ).aggregate(total=Sum('amount'))['total'] or 0
+
+    revenue_month = Payment.objects.filter(
+        created_at__date__gte=month_ago,
+        status='completed'
+    ).aggregate(total=Sum('amount'))['total'] or 0
+
+    active_partners = Partner.objects.filter(is_active=True, is_verified=True).count()
+    pending_orders = Order.objects.filter(status__in=['pending', 'processing']).count()
+
+    # Add to context
+    context.update({
+        "kpi": [
+            {
+                "title": "Orders Today",
+                "metric": orders_today,
+                "footer": f"{orders_week} this week, {orders_month} this month",
+            },
+            {
+                "title": "Revenue Today",
+                "metric": f"₹{revenue_today:,.2f}",
+                "footer": f"₹{revenue_week:,.2f} this week, ₹{revenue_month:,.2f} this month",
+            },
+            {
+                "title": "Active Partners",
+                "metric": active_partners,
+                "footer": "Verified and active",
+            },
+            {
+                "title": "Pending Orders",
+                "metric": pending_orders,
+                "footer": "Requires attention",
+            },
+        ]
+    })
+
+    return context

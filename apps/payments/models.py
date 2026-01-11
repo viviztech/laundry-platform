@@ -413,6 +413,7 @@ class PaymentMethod(models.Model):
         ('card', 'Card'),
         ('upi', 'UPI'),
         ('netbanking', 'Net Banking'),
+        ('wallet', 'Digital Wallet'),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -424,6 +425,7 @@ class PaymentMethod(models.Model):
 
     # Method details
     type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+    provider = models.CharField(max_length=100, blank=True)  # Provider name (Visa, HDFC, Paytm, etc.)
     nickname = models.CharField(max_length=100, blank=True)
 
     # For cards
@@ -434,6 +436,13 @@ class PaymentMethod(models.Model):
 
     # For UPI
     upi_id = models.CharField(max_length=100, blank=True)
+
+    # For Net Banking
+    bank_name = models.CharField(max_length=100, blank=True)
+
+    # For Digital Wallets
+    wallet_provider = models.CharField(max_length=50, blank=True)  # Paytm, PhonePe, GPay, etc.
+    wallet_number = models.CharField(max_length=20, blank=True)
 
     # Gateway token
     gateway_token = models.CharField(max_length=255, blank=True)
@@ -457,6 +466,10 @@ class PaymentMethod(models.Model):
             return f"{self.card_brand} •••• {self.card_last4}"
         elif self.type == 'upi':
             return f"UPI: {self.upi_id}"
+        elif self.type == 'netbanking':
+            return f"Net Banking: {self.bank_name}"
+        elif self.type == 'wallet':
+            return f"{self.wallet_provider} Wallet"
         return f"{self.type} - {self.nickname}"
 
     def save(self, *args, **kwargs):

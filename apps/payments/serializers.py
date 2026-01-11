@@ -14,12 +14,16 @@ User = get_user_model()
 class PaymentMethodSerializer(serializers.ModelSerializer):
     """Serializer for PaymentMethod model."""
 
+    # For mobile app compatibility - map card_last4 to last4
+    last4 = serializers.CharField(source='card_last4', read_only=True)
+
     class Meta:
         model = PaymentMethod
         fields = (
-            'id', 'type', 'nickname', 'is_default',
-            'is_active', 'card_last4', 'card_brand',
+            'id', 'type', 'provider', 'nickname', 'is_default',
+            'is_active', 'card_last4', 'last4', 'card_brand',
             'card_expiry_month', 'card_expiry_year', 'upi_id',
+            'bank_name', 'wallet_provider', 'wallet_number',
             'created_at', 'updated_at'
         )
         read_only_fields = ('id', 'created_at', 'updated_at')
@@ -38,6 +42,16 @@ class PaymentMethodSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "UPI ID is required for UPI payment method."
                 )
+        elif method_type == 'netbanking':
+            if not data.get('bank_name'):
+                raise serializers.ValidationError(
+                    "Bank name is required for net banking payment method."
+                )
+        elif method_type == 'wallet':
+            if not data.get('wallet_provider'):
+                raise serializers.ValidationError(
+                    "Wallet provider is required for wallet payment method."
+                )
 
         return data
 
@@ -46,33 +60,68 @@ class PaymentMethodCreateSerializer(serializers.Serializer):
     """Serializer for creating a new payment method."""
 
     type = serializers.ChoiceField(choices=PaymentMethod.TYPE_CHOICES)
+    provider = serializers.CharField(max_length=100, required=False, allow_blank=True)
     nickname = serializers.CharField(max_length=100, required=False, allow_blank=True)
     is_default = serializers.BooleanField(default=False)
 
     # Card details
+    card_number = serializers.CharField(max_length=19, required=False, allow_blank=True, write_only=True)
+    card_holder = serializers.CharField(max_length=100, required=False, allow_blank=True, write_only=True)
     card_token = serializers.CharField(required=False, allow_blank=True)
     card_last4 = serializers.CharField(max_length=4, required=False, allow_blank=True)
     card_brand = serializers.CharField(max_length=50, required=False, allow_blank=True)
     card_expiry_month = serializers.IntegerField(required=False, allow_null=True)
     card_expiry_year = serializers.IntegerField(required=False, allow_null=True)
+    cvv = serializers.CharField(max_length=4, required=False, allow_blank=True, write_only=True)
 
     # UPI details
     upi_id = serializers.CharField(max_length=100, required=False, allow_blank=True)
+
+    # Net Banking details
+    bank_name = serializers.CharField(max_length=100, required=False, allow_blank=True)
+
+    # Wallet details
+    wallet_provider = serializers.CharField(max_length=50, required=False, allow_blank=True)
+    wallet_number = serializers.CharField(max_length=20, required=False, allow_blank=True)
 
     def validate(self, data):
         """Validate payment method creation data."""
         method_type = data.get('type')
 
         if method_type == 'card':
-            if not data.get('card_token'):
+            # For card payments, require either token or card details for tokenization
+            if not data.get('card_number') and not data.get('card_token'):
                 raise serializers.ValidationError(
-                    "Card token is required for card payment method."
+                    "Card number is required for card payment method."
                 )
+            # Extract last 4 digits if card number provided
+            if data.get('card_number'):
+                data['card_last4'] = data['card_number'][-4:]
+                # Set provider as card brand if not provided
+                if not data.get('provider'):
+                    data['provider'] = data.get('card_brand', 'Card')
         elif method_type == 'upi':
             if not data.get('upi_id'):
                 raise serializers.ValidationError(
                     "UPI ID is required for UPI payment method."
                 )
+            # Extract provider from UPI ID
+            if not data.get('provider') and '@' in data['upi_id']:
+                data['provider'] = data['upi_id'].split('@')[1].capitalize()
+        elif method_type == 'netbanking':
+            if not data.get('bank_name'):
+                raise serializers.ValidationError(
+                    "Bank name is required for net banking payment method."
+                )
+            if not data.get('provider'):
+                data['provider'] = data['bank_name']
+        elif method_type == 'wallet':
+            if not data.get('wallet_provider'):
+                raise serializers.ValidationError(
+                    "Wallet provider is required for wallet payment method."
+                )
+            if not data.get('provider'):
+                data['provider'] = data['wallet_provider']
 
         return data
 
@@ -80,16 +129,25 @@ class PaymentMethodCreateSerializer(serializers.Serializer):
 class WalletTransactionSerializer(serializers.ModelSerializer):
     """Serializer for WalletTransaction model."""
 
+    # Mobile app compatibility - map transaction_type to type and add status
+    type = serializers.CharField(source='transaction_type', read_only=True)
+    status = serializers.SerializerMethodField()
+    order_id = serializers.UUIDField(source='order.id', read_only=True, allow_null=True)
+
     class Meta:
         model = WalletTransaction
         fields = (
-            'id', 'transaction_id', 'transaction_type', 'amount',
-            'balance_after', 'description', 'payment', 'order',
-            'refund', 'created_at'
+            'id', 'transaction_id', 'transaction_type', 'type', 'amount',
+            'balance_after', 'description', 'payment', 'order', 'order_id',
+            'refund', 'status', 'created_at'
         )
         read_only_fields = (
             'id', 'transaction_id', 'balance_after', 'created_at'
         )
+
+    def get_status(self, obj):
+        """Get transaction status - always completed for wallet transactions."""
+        return 'completed'
 
 
 class WalletSerializer(serializers.ModelSerializer):
@@ -97,13 +155,16 @@ class WalletSerializer(serializers.ModelSerializer):
 
     user_email = serializers.EmailField(source='user.email', read_only=True)
     recent_transactions = serializers.SerializerMethodField()
+    currency = serializers.SerializerMethodField()  # Mobile app compatibility
+    cashback = serializers.SerializerMethodField()  # Placeholder for future feature
+    rewards = serializers.SerializerMethodField()  # Placeholder for future feature
 
     class Meta:
         model = Wallet
         fields = (
-            'id', 'user', 'user_email', 'balance', 'is_active',
-            'is_locked', 'recent_transactions',
-            'created_at', 'updated_at'
+            'id', 'user', 'user_email', 'balance', 'currency',
+            'cashback', 'rewards', 'is_active', 'is_locked',
+            'recent_transactions', 'created_at', 'updated_at'
         )
         read_only_fields = (
             'id', 'user', 'balance', 'is_locked',
@@ -114,6 +175,18 @@ class WalletSerializer(serializers.ModelSerializer):
         """Get recent wallet transactions."""
         transactions = obj.transactions.all()[:5]
         return WalletTransactionSerializer(transactions, many=True).data
+
+    def get_currency(self, obj):
+        """Get currency - default to INR."""
+        return 'INR'
+
+    def get_cashback(self, obj):
+        """Get cashback balance - placeholder for future feature."""
+        return 0.00
+
+    def get_rewards(self, obj):
+        """Get rewards balance - placeholder for future feature."""
+        return 0.00
 
 
 class WalletAddBalanceSerializer(serializers.Serializer):

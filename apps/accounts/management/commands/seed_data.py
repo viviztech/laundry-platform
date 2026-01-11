@@ -4,6 +4,7 @@ Seed realistic data for LaundryConnect platform
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
+from django.utils.text import slugify
 from decimal import Decimal
 from datetime import timedelta
 import random
@@ -237,6 +238,10 @@ class Command(BaseCommand):
 
         categories = []
         for data in categories_data:
+            # Add slug if not present
+            if 'slug' not in data:
+                data['slug'] = slugify(data['name'])
+
             category, _ = ServiceCategory.objects.get_or_create(
                 name=data['name'],
                 defaults=data

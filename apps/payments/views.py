@@ -476,6 +476,7 @@ class PaymentMethodViewSet(viewsets.ModelViewSet):
         payment_method = PaymentMethod.objects.create(
             user=request.user,
             type=data['type'],
+            provider=data.get('provider', ''),
             nickname=data.get('nickname', ''),
             is_default=data['is_default'],
             card_last4=data.get('card_last4', ''),
@@ -483,6 +484,9 @@ class PaymentMethodViewSet(viewsets.ModelViewSet):
             card_expiry_month=data.get('card_expiry_month'),
             card_expiry_year=data.get('card_expiry_year'),
             upi_id=data.get('upi_id', ''),
+            bank_name=data.get('bank_name', ''),
+            wallet_provider=data.get('wallet_provider', ''),
+            wallet_number=data.get('wallet_number', ''),
             gateway_token='',  # Would be set from gateway integration
         )
 
@@ -531,3 +535,32 @@ class PaymentMethodViewSet(viewsets.ModelViewSet):
         payment_method.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @extend_schema(
+        summary="Update payment method",
+        description="Update payment method, primarily for setting as default or updating nickname.",
+    )
+    def partial_update(self, request, *args, **kwargs):
+        """Update payment method (mainly for setting as default or nickname)."""
+        instance = self.get_object()
+
+        # If setting as default, handle it with transaction
+        if request.data.get('is_default') == True:
+            with transaction.atomic():
+                # Unset other defaults
+                PaymentMethod.objects.filter(
+                    user=request.user,
+                    is_default=True
+                ).exclude(id=instance.id).update(is_default=False)
+
+                instance.is_default = True
+                instance.save()
+
+            return Response(PaymentMethodSerializer(instance).data)
+
+        # For other updates (like nickname), use default behavior
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data)

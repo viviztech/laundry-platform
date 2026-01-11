@@ -13,6 +13,7 @@ from .views import (
     ChangePasswordView,
     AddressListCreateView,
     AddressDetailView,
+    RegisterFCMTokenView,
 )
 
 app_name = 'accounts'
@@ -27,6 +28,9 @@ urlpatterns = [
     # User Profile
     path('me/', CurrentUserView.as_view(), name='current_user'),
     path('change-password/', ChangePasswordView.as_view(), name='change_password'),
+
+    # Push Notifications
+    path('notification-token/', RegisterFCMTokenView.as_view(), name='register_fcm_token'),
 
     # Addresses
     path('addresses/', AddressListCreateView.as_view(), name='address_list_create'),

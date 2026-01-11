@@ -211,3 +211,19 @@ class ChangePasswordSerializer(serializers.Serializer):
         if not user.check_password(value):
             raise serializers.ValidationError("Old password is incorrect.")
         return value
+
+
+class FCMTokenSerializer(serializers.Serializer):
+    """Serializer for registering FCM push notification token."""
+
+    token = serializers.CharField(required=True, max_length=500)
+    platform = serializers.ChoiceField(
+        required=True,
+        choices=[('ios', 'iOS'), ('android', 'Android')]
+    )
+
+    def validate_token(self, value):
+        """Validate token is not empty."""
+        if not value or not value.strip():
+            raise serializers.ValidationError("Token cannot be empty.")
+        return value.strip()

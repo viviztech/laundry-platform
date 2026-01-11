@@ -1,0 +1,14 @@
+# Nixpacks configuration for Railway deployment
+# Alternative to railway.json - Railway will use this if present
+
+[phases.setup]
+nixPkgs = ["python312", "postgresql"]
+
+[phases.install]
+cmds = ["pip install -r requirements/base.txt"]
+
+[phases.build]
+cmds = []
+
+[start]
+cmd = "python manage.py migrate && python manage.py collectstatic --noinput && daphne -b 0.0.0.0 -p $PORT config.asgi:application"

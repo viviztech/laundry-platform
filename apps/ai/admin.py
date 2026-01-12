@@ -76,7 +76,7 @@ class RecommendationAdmin(admin.ModelAdmin):
             badges.append('<span style="background: #17a2b8; color: white; padding: 2px 4px; border-radius: 2px; font-size: 10px;">CLICKED</span>')
         if obj.was_accepted:
             badges.append('<span style="background: #ffc107; color: black; padding: 2px 4px; border-radius: 2px; font-size: 10px;">ACCEPTED</span>')
-        return format_html(' '.join(badges) if badges else '-')
+        return format_html('{}', ' '.join(badges) if badges else '-')
     status_badges.short_description = 'Status'
 
 

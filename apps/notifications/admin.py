@@ -229,9 +229,9 @@ class NotificationPreferenceAdmin(admin.ModelAdmin):
         )
         if enabled:
             return format_html(
-                '<span style="color: green;">✓ Enabled</span>'
+                '<span style="color: green;">{}</span>', '✓ Enabled'
             )
-        return format_html('<span style="color: red;">✗ Disabled</span>')
+        return format_html('<span style="color: red;">{}</span>', '✗ Disabled')
     email_status.short_description = 'Email Notifications'
 
     def push_status(self, obj):
@@ -243,18 +243,18 @@ class NotificationPreferenceAdmin(admin.ModelAdmin):
         )
         if enabled:
             return format_html(
-                '<span style="color: green;">✓ Enabled</span>'
+                '<span style="color: green;">{}</span>', '✓ Enabled'
             )
-        return format_html('<span style="color: red;">✗ Disabled</span>')
+        return format_html('<span style="color: red;">{}</span>', '✗ Disabled')
     push_status.short_description = 'Push Notifications'
 
     def marketing_status(self, obj):
         """Show marketing status."""
         if obj.marketing_emails or obj.promotional_push:
             return format_html(
-                '<span style="color: orange;">⚠ Opted In</span>'
+                '<span style="color: orange;">{}</span>', '⚠ Opted In'
             )
-        return format_html('<span style="color: gray;">✗ Opted Out</span>')
+        return format_html('<span style="color: gray;">{}</span>', '✗ Opted Out')
     marketing_status.short_description = 'Marketing'
 
     actions = ['enable_all_notifications', 'disable_marketing']

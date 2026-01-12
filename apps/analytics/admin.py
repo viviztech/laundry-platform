@@ -250,7 +250,7 @@ class PartnerPerformanceMetricAdmin(admin.ModelAdmin):
         """Show issues count with color."""
         total_issues = obj.issues_reported + obj.items_damaged + obj.items_lost
         if total_issues == 0:
-            return format_html('<span style="color: #28a745;">✓ No Issues</span>')
+            return format_html('<span style="color: #28a745;">{}</span>', '✓ No Issues')
         color = '#dc3545' if total_issues > 5 else '#ffc107'
         return format_html(
             '<span style="color: {}; font-weight: bold;">{} issues</span>',
@@ -516,14 +516,14 @@ class ReportScheduleAdmin(admin.ModelAdmin):
     def last_run_display(self, obj):
         """Display last run time."""
         if not obj.last_run_at:
-            return format_html('<span style="color: #6c757d;">Never run</span>')
+            return format_html('<span style="color: #6c757d;">{}</span>', 'Never run')
         return obj.last_run_at.strftime('%Y-%m-%d %H:%M')
     last_run_display.short_description = 'Last Run'
 
     def next_run_display(self, obj):
         """Display next run time."""
         if not obj.next_run_at:
-            return format_html('<span style="color: #6c757d;">Not scheduled</span>')
+            return format_html('<span style="color: #6c757d;">{}</span>', 'Not scheduled')
         return obj.next_run_at.strftime('%Y-%m-%d %H:%M')
     next_run_display.short_description = 'Next Run'
 
@@ -609,8 +609,8 @@ class AnalyticsCacheAdmin(admin.ModelAdmin):
     def is_expired_indicator(self, obj):
         """Show if cache is expired."""
         if obj.is_expired:
-            return format_html('<span style="color: #dc3545;">✗ Expired</span>')
-        return format_html('<span style="color: #28a745;">✓ Valid</span>')
+            return format_html('<span style="color: #dc3545;">{}</span>', '✗ Expired')
+        return format_html('<span style="color: #28a745;">{}</span>', '✓ Valid')
     is_expired_indicator.short_description = 'Status'
     is_expired_indicator.boolean = False
 

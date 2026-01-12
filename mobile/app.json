@@ -12,19 +12,59 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "notification": {
+      "icon": "./assets/notification-icon.png",
+      "color": "#007AFF",
+      "androidMode": "default",
+      "androidCollapsedTitle": "LaundryConnect"
+    },
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.laundryconnect.mobile",
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIBackgroundModes": ["remote-notification"],
+        "NSCameraUsageDescription": "LaundryConnect needs access to your camera to take photos of your laundry items.",
+        "NSPhotoLibraryUsageDescription": "LaundryConnect needs access to your photo library to select photos of your laundry items.",
+        "NSPhotoLibraryAddUsageDescription": "LaundryConnect needs access to save photos to your photo library."
+      }
     },
     "android": {
+      "package": "com.laundryconnect.mobile",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#007AFF",
+          "sounds": ["./assets/notification-sound.wav"]
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "LaundryConnect needs access to your photos to select laundry item images.",
+          "cameraPermission": "LaundryConnect needs access to your camera to take photos of laundry items."
+        }
+      ]
+    ]
   }
 }

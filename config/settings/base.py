@@ -382,7 +382,7 @@ def dashboard_callback(request, context):
         status='completed'
     ).aggregate(total=Sum('amount'))['total'] or 0
 
-    active_partners = Partner.objects.filter(is_active=True, is_verified=True).count()
+    active_partners = Partner.objects.filter(status='active', is_verified=True).count()
     pending_orders = Order.objects.filter(status__in=['pending', 'processing']).count()
 
     # Add to context

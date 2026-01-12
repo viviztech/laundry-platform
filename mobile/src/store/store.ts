@@ -11,6 +11,9 @@ import authReducer from './slices/authSlice';
 import servicesReducer from './slices/servicesSlice';
 import ordersReducer from './slices/ordersSlice';
 import notificationsReducer from './slices/notificationsSlice';
+import addressReducer from './slices/addressSlice';
+import chatReducer from './slices/chatSlice';
+import paymentReducer from './slices/paymentSlice';
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +21,9 @@ export const store = configureStore({
     services: servicesReducer,
     orders: ordersReducer,
     notifications: notificationsReducer,
+    address: addressReducer,
+    chat: chatReducer,
+    payment: paymentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

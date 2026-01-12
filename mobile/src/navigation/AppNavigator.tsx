@@ -4,6 +4,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import { Platform, ActivityIndicator, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -18,7 +19,16 @@ import ServicesScreen from '../screens/services/ServicesScreen';
 import ServiceDetailScreen from '../screens/services/ServiceDetailScreen';
 import OrdersScreen from '../screens/orders/OrdersScreen';
 import OrderDetailScreen from '../screens/orders/OrderDetailScreen';
+import NewOrderScreen from '../screens/orders/NewOrderScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
+import AddressListScreen from '../screens/profile/AddressListScreen';
+import AddEditAddressScreen from '../screens/profile/AddEditAddressScreen';
+import ChatListScreen from '../screens/chat/ChatListScreen';
+import ChatScreen from '../screens/chat/ChatScreen';
+import PaymentMethodsScreen from '../screens/payment/PaymentMethodsScreen';
+import WalletScreen from '../screens/payment/WalletScreen';
+import AddPaymentMethodScreen from '../screens/payment/AddPaymentMethodScreen';
+import PaymentGatewayScreen from '../screens/payment/PaymentGatewayScreen';
 
 // Redux
 import { useAppSelector, useAppDispatch } from '../store/store';
@@ -56,6 +66,14 @@ function MainTabs() {
         component={OrdersScreen}
         options={{
           tabBarLabel: 'Orders',
+        }}
+      />
+      <Tab.Screen
+        name="ChatList"
+        component={ChatListScreen}
+        options={{
+          tabBarLabel: 'Chat',
+          title: 'Messages',
         }}
       />
       <Tab.Screen
@@ -98,6 +116,51 @@ function MainStack() {
         component={OrderDetailScreen}
         options={{ title: 'Order Details' }}
       />
+      <Stack.Screen
+        name="NewOrder"
+        component={NewOrderScreen}
+        options={{ title: 'New Order' }}
+      />
+      <Stack.Screen
+        name="AddressList"
+        component={AddressListScreen}
+        options={{ title: 'My Addresses' }}
+      />
+      <Stack.Screen
+        name="AddAddress"
+        component={AddEditAddressScreen}
+        options={{ title: 'Add Address' }}
+      />
+      <Stack.Screen
+        name="EditAddress"
+        component={AddEditAddressScreen}
+        options={{ title: 'Edit Address' }}
+      />
+      <Stack.Screen
+        name="Chat"
+        component={ChatScreen}
+        options={{ title: 'Chat' }}
+      />
+      <Stack.Screen
+        name="PaymentMethods"
+        component={PaymentMethodsScreen}
+        options={{ title: 'Payment Methods' }}
+      />
+      <Stack.Screen
+        name="Wallet"
+        component={WalletScreen}
+        options={{ title: 'My Wallet' }}
+      />
+      <Stack.Screen
+        name="AddPaymentMethod"
+        component={AddPaymentMethodScreen}
+        options={{ title: 'Add Payment Method' }}
+      />
+      <Stack.Screen
+        name="PaymentGateway"
+        component={PaymentGatewayScreen}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 }
@@ -114,18 +177,31 @@ export default function AppNavigator() {
 
   const checkAuth = async () => {
     try {
+      console.log('Platform:', Platform.OS);
+      console.log('Checking authentication...');
       const token = await AsyncStorage.getItem('access_token');
+      console.log('Token exists:', !!token);
       if (token) {
         await dispatch(fetchCurrentUser()).unwrap();
       }
     } catch (error) {
       console.error('Auth check failed:', error);
     } finally {
+      console.log('Auth check complete');
       setIsLoading(false);
     }
   };
 
   if (isLoading) {
+    // Show a simple loading screen for web
+    if (Platform.OS === 'web') {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+          <ActivityIndicator size="large" color="#2196F3" />
+          <Text style={{ marginTop: 16, fontSize: 16, color: '#666' }}>Loading...</Text>
+        </View>
+      );
+    }
     return <SplashScreen />;
   }
 

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaundryConnect Mobile - Web Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        #root {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            font-size: 18px;
+            color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div id="loading">Loading LaundryConnect...</div>
+    </div>
+
+    <script>
+        // Add error logging
+        window.addEventListener('error', function(event) {
+            console.error('Global error:', event.error);
+            document.getElementById('loading').innerHTML =
+                '<div style="padding: 20px; text-align: center;">' +
+                '<h2 style="color: red;">Error Loading App</h2>' +
+                '<p style="margin-top: 10px;">' + event.error.message + '</p>' +
+                '<p style="margin-top: 10px; font-size: 12px;">Check console for details</p>' +
+                '</div>';
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('Unhandled promise rejection:', event.reason);
+        });
+
+        // Log when React Native Web initializes
+        console.log('Starting LaundryConnect Mobile Web App...');
+    </script>
+</body>
+</html>

@@ -5,10 +5,12 @@
 
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { logout } from '../../store/slices/authSlice';
 
 export default function ProfileScreen() {
+  const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
 
@@ -41,13 +43,27 @@ export default function ProfileScreen() {
           <Text style={styles.menuArrow}>›</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem}>
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => navigation.navigate('AddressList' as never)}
+        >
           <Text style={styles.menuText}>My Addresses</Text>
           <Text style={styles.menuArrow}>›</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem}>
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => navigation.navigate('PaymentMethods' as never)}
+        >
           <Text style={styles.menuText}>Payment Methods</Text>
+          <Text style={styles.menuArrow}>›</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => navigation.navigate('Wallet' as never)}
+        >
+          <Text style={styles.menuText}>My Wallet</Text>
           <Text style={styles.menuArrow}>›</Text>
         </TouchableOpacity>
 

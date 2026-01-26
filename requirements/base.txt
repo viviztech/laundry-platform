@@ -1,5 +1,5 @@
 # Core Django packages (Python 3.14 compatible)
-Django>=6.0
+Django==5.0.6
 djangorestframework>=3.16.0
 django-cors-headers==4.3.1
 

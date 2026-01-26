@@ -19,17 +19,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build Docker Image
+      - name: Build Docker image
         run: |
-          docker build -t sribalajidevops/laundry-backend:latest \
-          -f "Viviz Technologies/laundry-platform/Dockerfile" \
-          "Viviz Technologies/laundry-platform"
+          docker build -t sribalajidevops/laundry-backend:latest .
 
-      - name: Push Docker Image
+      - name: Push Docker image
         run: |
           docker push sribalajidevops/laundry-backend:latest
 
-      - name: Deploy to EC2
+      - name: Deploy on EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}

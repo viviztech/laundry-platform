@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Login to DockerHub
@@ -19,11 +19,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build image
+      - name: Build Docker Image
         run: |
-          docker build -t sribalajidevops/laundry-backend:latest -f Dockerfile .
+          docker build -t sribalajidevops/laundry-backend:latest \
+          -f "Viviz Technologies/laundry-platform/Dockerfile" \
+          "Viviz Technologies/laundry-platform"
 
-      - name: Push image
+      - name: Push Docker Image
         run: |
           docker push sribalajidevops/laundry-backend:latest
 
